@@ -4,12 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>jQery AJAX API 활용하기 연습</title>
-    <link rel="stylesheet" href="kakaoSearch.js" />
   </head>
   <body>
     <h1>My Site</h1>
-    <form action="kakaoSearch.js" method="get">
-      <input type="text" id="search" /><button id="btn">검색</button>
+    <form id="searchForm">
+      <input type="text" id="search" />
+      <button id="btn" onclick="searching(); return false;">
+        검색
+      </button>
       <p id="p"></p>
     </form>
     <script
@@ -18,25 +20,32 @@
       crossorigin="anonymous"
     ></script>
     <script>
-      $.ajax({
-        method: "GET",
-        url: "https://dapi.kakao.com/v3/search/book?target=title",
-        data: { query: "미움받을 용기" },
-        headers: {
-          Authorization: "KakaoAK 1cac87d729eebd23714fccdb3f521ef4",
-        },
-      }).done(function (msg) {
-        {
-          for (i in msg.documents) {
-            console.log(msg.documents[i].title);
-            console.log(msg.documents[i].thumbnail);
-            $("#p").append("<p>");
-            $("#p").append("<strong>" + msg.documents[i].title + "</strong>");
-            $("#p").append("<img src='" + msg.documents[i].thumbnail + "'/>");
-            $("#p").append("</p>");
-          }
-        }
-      });
+      function searching() {
+        var searchText = $("#search").val();
+        $.ajax({
+          method: "GET",
+          url: "https://dapi.kakao.com/v3/search/book?target=title",
+          data: { query: searchText },
+          headers: {
+            Authorization: "KakaoAK 1cac87d729eebd23714fccdb3f521ef4",
+          },
+          success: function (msg) {
+            {
+              $("#p").empty();
+              for (i in msg.documents) {
+                $("#p").append("<p>");
+                $("#p").append(
+                  "<strong>" + msg.documents[i].title + "</strong>"
+                );
+                $("#p").append(
+                  "<img src='" + msg.documents[i].thumbnail + "'/>"
+                );
+                $("#p").append("</p>");
+              }
+            }
+          },
+        });
+      }
     </script>
   </body>
 </html>
